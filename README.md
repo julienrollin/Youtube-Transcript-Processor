@@ -2,6 +2,8 @@
 
 A local desktop application for extracting and processing YouTube transcripts using a local LLM (via LM Studio).
 
+![UI Preview](ui_preview.png)
+
 ## Features
 
 - **Extract Transcripts**: Formatting-free extraction of transcripts from YouTube videos.
