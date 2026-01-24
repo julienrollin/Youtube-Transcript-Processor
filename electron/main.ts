@@ -145,6 +145,7 @@ Instructions:
 - Remove filler words (um, uh, like, you know).
 - Fix punctuation and capitalization.
 - Merge broken sentences.
+- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
 - Do NOT output anything else. Just the cleaned text.
 
 Transcript:
@@ -155,15 +156,17 @@ Instructions:
 - Add ## Headers for main topics.
 - Use - Bullet points for lists.
 - Fix grammar.
+- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
 
 Transcript:
 ${transcript}`,
 
             summary: `Task: Summarize this transcript.
 Instructions:
-- Write a 2-3 sentence overview.
-- List 3-5 Key Takeaways.
+- Write a 2-3 sentence overview in the SAME LANGUAGE as the transcript.
+- List 3-5 Key Takeaways in the SAME LANGUAGE as the transcript.
 - Extract 1 meaningful quote.
+- IMPORTANT: Output MUST be in the same language as the input transcript.
 
 Transcript:
 ${transcript}`,
@@ -173,12 +176,15 @@ Instructions:
 - Use H1 for Title, H2 for Sections.
 - Preserve ALL details, numbers, and technical terms.
 - Fix flow and grammar.
+- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
 
 Transcript:
 ${transcript}`,
 
             json: `Task: Convert to JSON.
 Format: { "title": "...", "content": "..." }
+Instructions:
+- Maintain the original language for the content values.
 
 Transcript:
 ${transcript}`
@@ -193,7 +199,7 @@ ${transcript}`
         const completion = await client.chat.completions.create({
             model: modelId,
             messages: [
-                { role: "system", content: "You are a direct text processing engine. You rewrite text exactly as requested. Do not chat." },
+                { role: "system", content: "You are a direct text processing engine. You rewrite text exactly as requested. Do not chat. ALWAYS output in the same language as the input text unless explicitly told otherwise." },
                 { role: "user", content: prompt }
             ],
             temperature: 0.1,
@@ -282,7 +288,7 @@ async function ensurePythonDependencies() {
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 425,
-        height: 655,
+        height: 700,
         minWidth: 410,
         minHeight: 655,
         backgroundColor: '#000000', // Match tech-bg

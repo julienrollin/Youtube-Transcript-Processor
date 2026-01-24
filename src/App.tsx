@@ -135,7 +135,7 @@ function App() {
                 {/* Title (Small) */}
                 <div className="flex items-center gap-2 text-tech-orange font-bold tracking-[0.1em] uppercase text-xs font-grotesk min-w-fit">
                     <div className="w-2 h-2 bg-tech-orange rounded-full" />
-                    Transcript YT Scrapper
+                    Transcript Processor
                 </div>
 
 
