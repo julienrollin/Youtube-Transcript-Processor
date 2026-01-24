@@ -282,7 +282,7 @@ async function ensurePythonDependencies() {
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 425,
-        height: 721,
+        height: 655,
         minWidth: 410,
         minHeight: 655,
         backgroundColor: '#000000', // Match tech-bg

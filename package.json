@@ -42,7 +42,7 @@
     },
     "build": {
         "appId": "com.transcript.processor",
-        "productName": "Transcript Processor",
+        "productName": "YT Transcript Processor",
         "directories": {
             "output": "release"
         },
@@ -60,7 +60,8 @@
             }
         ],
         "win": {
-            "target": "nsis"
+            "target": "nsis",
+            "icon": "transcript.ico"
         }
     }
 }
