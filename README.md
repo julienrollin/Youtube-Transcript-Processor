@@ -16,7 +16,7 @@ A local desktop application for extracting and processing YouTube transcripts us
     - **Markdown**: Convert to a detailed Markdown document, perfect for LLM ingestion.
 - **Privacy Focused**: All processing happens locally on your machine.
 
-## Prerequisites
+## Prerequisites ⚙️
 
 1.  **Python**: Required for the underlying transcript extraction tool (`youtube-transcript-api`).
     -   **Version**: Python 3.11 or higher is recommended.
@@ -25,7 +25,7 @@ A local desktop application for extracting and processing YouTube transcripts us
 2.  **LM Studio**: Required for AI processing.
     -   [Download LM Studio](https://lmstudio.ai/)
 
-## LM Studio Setup
+## LM Studio Setup 🛠️
 
 This application connects to LM Studio's local server API.
 
@@ -39,7 +39,7 @@ This application connects to LM Studio's local server API.
 
 Once the server is running (green indicator), the YT Transcript Processor will automatically detect the connection.
 
-## Installation & Usage
+## Installation & Usage 📦
 
 1.  Download the latest installer from the [Releases](https://github.com/julienrollin/Youtube-Transcript-Processor/releases) page.
 2.  Run the installer (`YT Transcript Processor Setup.exe`).
