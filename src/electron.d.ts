@@ -35,6 +35,7 @@ export interface ElectronAPI {
     openPath: (path: string) => Promise<void>;
     checkLLMConnection: () => Promise<LLMConnectionStatus>;
     onLogEvent: (callback: (event: LogEvent) => void) => void;
+    resizeWindow: (height: number) => Promise<void>;
     removeLogListener: () => void;
 }
 

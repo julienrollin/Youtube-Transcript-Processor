@@ -288,7 +288,7 @@ async function ensurePythonDependencies() {
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 425,
-        height: 760,
+        height: 700,
         minWidth: 410,
         minHeight: 655,
         backgroundColor: '#000000', // Match tech-bg
@@ -351,6 +351,14 @@ app.whenReady().then(() => {
 
     ipcMain.handle('open-path', async (_, p) => {
         shell.openPath(p);
+    });
+
+    ipcMain.handle('resize-window', async (_, height) => {
+        if (mainWindow) {
+            const [currentWidth] = mainWindow.getSize();
+            // Add some padding to safe height
+            mainWindow.setSize(currentWidth, Math.ceil(height));
+        }
     });
 
     createWindow();

@@ -125,9 +125,27 @@ function App() {
         }, 100);
     };
 
-    return (
-        <div className="h-screen flex flex-col bg-tech-bg text-tech-text font-mono select-none overflow-hidden">
+    const contentRef = useRef<HTMLDivElement>(null);
 
+    // Auto-resize window to fit content
+    useEffect(() => {
+        if (!contentRef.current) return;
+
+        const observer = new ResizeObserver(() => {
+            if (contentRef.current) {
+                // Get the full scrolling height of the content container
+                // + 40 for title bar
+                const contentHeight = contentRef.current.scrollHeight + 40;
+                window.electron.resizeWindow(contentHeight);
+            }
+        });
+
+        observer.observe(contentRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={contentRef} className="h-screen flex flex-col bg-tech-bg text-tech-text font-mono select-none overflow-hidden">
             {/* TITLE BAR / DRAG HANDLE */}
             {/* Height 40px matches Electron main.ts titleBarOverlay height */}
             <div className="h-10 shrink-0 bg-black border-b border-tech-border flex items-center px-4 gap-6 drag select-none">
@@ -258,7 +276,7 @@ function App() {
                             </span>
                         </div>
 
-                        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar h-48">
+                        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar h-28">
                             {store.batchQueue.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-tech-text-muted/30 space-y-1">
                                     <Zap className="w-4 h-4 opacity-20" />
@@ -310,7 +328,7 @@ function App() {
                             <Terminal className="w-3 h-3" />
                             Live_Log
                         </div>
-                        <div ref={logContainerRef} className="h-32 overflow-y-auto custom-scrollbar space-y-1">
+                        <div ref={logContainerRef} className="h-20 overflow-y-auto custom-scrollbar space-y-1">
                             {store.logs.length === 0 ? (
                                 <div className="text-[10px] text-tech-text-muted/30 italic py-2 text-center">
                                     Waiting for activity...

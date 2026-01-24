@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld('electron', {
     onLogEvent: (callback: LogEventHandler) => {
         ipcRenderer.on('log-event', (_, data) => callback(data));
     },
+    resizeWindow: (height: number) => ipcRenderer.invoke('resize-window', height),
     removeLogListener: () => {
         ipcRenderer.removeAllListeners('log-event');
     }
@@ -46,6 +47,7 @@ export interface ElectronAPI {
     openPath: (path: string) => Promise<void>;
     checkLLMConnection: () => Promise<LLMConnectionStatus>;
     onLogEvent: (callback: (event: LogEvent) => void) => void;
+    resizeWindow: (height: number) => Promise<void>;
     removeLogListener: () => void;
 }
 
