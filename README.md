@@ -27,11 +27,12 @@ A local desktop application to extracting and processing YouTube transcripts usi
 This application connects to LM Studio's local server API.
 
 1.  Open **LM Studio**.
-2.  **Search** for and **Download** a model (e.g., `Llama 3`, `Mistral`, or `Qwen`).
+2.  **Search** for and **Download** a model. We specifically recommend **Qwen 2.5-vl-7b** for the best balance of speed and accuracy.
 3.  Go to the **Local Server** tab (double-headed arrow icon on the left).
 4.  Select your downloaded model from the dropdown at the top.
-5.  Set the **Port** to `1234` (this is the default).
-6.  Click **Start Server**.
+5.  **Critical Step**: Increase the **Context Length** (slider in the right sidebar) to the maximum your hardware allows (e.g., **32768** or **60000+**). This ensures long transcripts are not cut off.
+6.  Set the **Port** to `1234` (this is the default).
+7.  Click **Start Server**.
 
 Once the server is running (green indicator), the YT Transcript Processor will automatically detect the connection.
 
