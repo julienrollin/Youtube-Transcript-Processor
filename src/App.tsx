@@ -135,7 +135,7 @@ function App() {
                 {/* Title (Small) */}
                 <div className="flex items-center gap-2 text-tech-orange font-bold tracking-[0.1em] uppercase text-xs font-grotesk min-w-fit">
                     <div className="w-2 h-2 bg-tech-orange rounded-full" />
-                    Transcript Processor
+                    YT Transcript Processor
                 </div>
 
 
@@ -258,9 +258,9 @@ function App() {
                             </span>
                         </div>
 
-                        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar max-h-[100px]">
+                        <div className="flex flex-col gap-1.5 overflow-y-auto custom-scrollbar h-48">
                             {store.batchQueue.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-10 text-tech-text-muted/30 space-y-1">
+                                <div className="flex flex-col items-center justify-center h-full text-tech-text-muted/30 space-y-1">
                                     <Zap className="w-4 h-4 opacity-20" />
                                     <span className="text-[10px] uppercase tracking-widest">Queue Empty</span>
                                 </div>
@@ -310,7 +310,7 @@ function App() {
                             <Terminal className="w-3 h-3" />
                             Live_Log
                         </div>
-                        <div ref={logContainerRef} className="h-10 overflow-y-auto custom-scrollbar space-y-1">
+                        <div ref={logContainerRef} className="h-32 overflow-y-auto custom-scrollbar space-y-1">
                             {store.logs.length === 0 ? (
                                 <div className="text-[10px] text-tech-text-muted/30 italic py-2 text-center">
                                     Waiting for activity...
