@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAppStore } from './store/appStore';
-import { Folder, Settings, Zap, Check, X, Cpu, Terminal } from 'lucide-react';
+import { Folder, Settings, Zap, Check, X, Cpu, Terminal, FileText } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -133,9 +133,8 @@ function App() {
 
         const observer = new ResizeObserver(() => {
             if (contentRef.current) {
-                // Get the full scrolling height of the content container
-                // + 40 for title bar
-                const contentHeight = contentRef.current.scrollHeight + 40;
+                // Get the content height. Title bar is included in contentRef.
+                const contentHeight = contentRef.current.scrollHeight;
                 window.electron.resizeWindow(contentHeight);
             }
         });
@@ -145,7 +144,7 @@ function App() {
     }, []);
 
     return (
-        <div ref={contentRef} className="h-screen flex flex-col bg-tech-bg text-tech-text font-mono select-none overflow-hidden">
+        <div ref={contentRef} className="min-h-screen flex flex-col bg-tech-bg text-tech-text font-mono select-none overflow-hidden">
             {/* TITLE BAR / DRAG HANDLE */}
             {/* Height 40px matches Electron main.ts titleBarOverlay height */}
             <div className="h-10 shrink-0 bg-black border-b border-tech-border flex items-center px-4 gap-6 drag select-none">
@@ -259,8 +258,8 @@ function App() {
                                     : "border-tech-text-muted text-tech-text-muted cursor-not-allowed"
                             )}
                         >
-                            <Zap className={cn("w-3.5 h-3.5", store.isProcessing && "animate-pulse")} />
-                            {store.isProcessing ? 'Processing...' : store.llmConnected ? 'START PROCESS' : 'LM STUDIO OFFLINE'}
+                            <FileText className={cn("w-3.5 h-3.5", store.isProcessing && "animate-pulse")} />
+                            {store.isProcessing ? 'Processing...' : store.llmConnected ? 'TRANSCRIPT!' : 'LM STUDIO OFFLINE'}
                         </button>
                     </div>
 
