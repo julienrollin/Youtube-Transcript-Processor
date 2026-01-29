@@ -1,6 +1,6 @@
 {
     "name": "transcript-processor",
-    "version": "1.0.0",
+    "version": "1.0.9",
     "description": "YouTube Transcript Processor with Local LLM",
     "main": "dist-electron/main.js",
     "scripts": {
@@ -54,6 +54,13 @@
             {
                 "from": "scripts",
                 "to": "scripts",
+                "filter": [
+                    "**/*"
+                ]
+            },
+            {
+                "from": "electron/prompts",
+                "to": "prompts",
                 "filter": [
                     "**/*"
                 ]

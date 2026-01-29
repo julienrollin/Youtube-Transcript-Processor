@@ -10,7 +10,7 @@ export type LogEventHandler = (event: {
 
 contextBridge.exposeInMainWorld('electron', {
     extractTranscript: (url: string) => ipcRenderer.invoke('extract-transcript', url),
-    processWithLLM: (transcript: string, mode: string, prompt?: string) => ipcRenderer.invoke('process-llm', transcript, mode, prompt),
+    processWithLLM: (transcript: string, mode: string, prompt?: string, youtubeUrl?: string) => ipcRenderer.invoke('process-llm', transcript, mode, prompt, youtubeUrl),
     selectOutputFolder: () => ipcRenderer.invoke('select-output-folder'),
     saveTranscript: (content: string, filename: string, folder: string) => ipcRenderer.invoke('save-transcript', content, filename, folder),
     openPath: (path: string) => ipcRenderer.invoke('open-path', path),
@@ -41,7 +41,7 @@ export interface LogEvent {
 
 export interface ElectronAPI {
     extractTranscript: (url: string) => Promise<any>;
-    processWithLLM: (transcript: string, mode: string, prompt?: string) => Promise<any>;
+    processWithLLM: (transcript: string, mode: string, prompt?: string, youtubeUrl?: string) => Promise<any>;
     selectOutputFolder: () => Promise<string | null>;
     saveTranscript: (content: string, filename: string, folder: string) => Promise<boolean>;
     openPath: (path: string) => Promise<void>;

@@ -29,7 +29,7 @@ export interface LLMProcessResult {
 
 export interface ElectronAPI {
     extractTranscript: (url: string) => Promise<TranscriptExtractionResult>;
-    processWithLLM: (transcript: string, mode: string, prompt?: string) => Promise<LLMProcessResult>;
+    processWithLLM: (transcript: string, mode: string, prompt?: string, youtubeUrl?: string) => Promise<LLMProcessResult>;
     selectOutputFolder: () => Promise<string | null>;
     saveTranscript: (content: string, filename: string, folder: string) => Promise<boolean>;
     openPath: (path: string) => Promise<void>;

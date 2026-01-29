@@ -1,0 +1,7 @@
+Format as markdown with headers, bullets, bold, italic. Keep original language. No content changes.
+
+Transcript:
+{{TRANSCRIPT}}
+
+---
+Source: {{YOUTUBE_URL}}

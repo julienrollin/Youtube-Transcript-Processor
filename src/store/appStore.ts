@@ -28,6 +28,8 @@ interface AppState {
     setLanguage: (lang: string) => void;
     processingModes: string[];
     toggleProcessingMode: (mode: string) => void;
+    saveRawTranscript: boolean;
+    setSaveRawTranscript: (val: boolean) => void;
 
     // Processing State
     isProcessing: boolean;
@@ -59,7 +61,7 @@ export const useAppStore = create<AppState>((set) => ({
     language: 'Auto',
     setLanguage: (language) => set({ language }),
 
-    processingModes: ['Markdown'],
+    processingModes: ['Summary'],
     toggleProcessingMode: (mode) => set((state) => {
         if (state.processingModes.includes(mode)) {
             // Don't allow empty, keep at least one if user tries to uncheck last
@@ -69,6 +71,9 @@ export const useAppStore = create<AppState>((set) => ({
             return { processingModes: [...state.processingModes, mode] };
         }
     }),
+
+    saveRawTranscript: false,
+    setSaveRawTranscript: (saveRawTranscript) => set({ saveRawTranscript }),
 
     isProcessing: false,
     setProcessing: (isProcessing) => set({ isProcessing }),

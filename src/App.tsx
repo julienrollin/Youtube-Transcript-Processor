@@ -81,18 +81,33 @@ function App() {
                         store.updateBatchItem(item.id, { videoTitle: extraction.videoTitle });
                     }
 
-                    // 2. Process & Save loop
+                    // 2. Save raw transcript if enabled
+                    if (store.saveRawTranscript) {
+                        store.updateBatchItem(item.id, { currentStep: 'Saving raw transcript...' });
+                        let rawFilename = extraction.videoTitle || extraction.videoId || 'transcript';
+                        rawFilename = `${rawFilename}_raw`;
+                        const rawSaved = await window.electron.saveTranscript(
+                            extraction.transcript!,
+                            rawFilename,
+                            store.outputFolder!
+                        );
+                        if (!rawSaved) throw new Error('Failed to save raw transcript.');
+                    }
+
+                    // 3. Process & Save loop
                     const modes = store.processingModes;
                     for (const mode of modes) {
                         store.updateBatchItem(item.id, { currentStep: `Processing (${mode})...` });
 
                         const processRes = await window.electron.processWithLLM(
                             extraction.transcript!,
-                            mode.toLowerCase()
+                            mode.toLowerCase(),
+                            undefined,  // custom prompt
+                            item.url    // youtube URL for {{YOUTUBE_URL}} placeholder
                         );
                         if (!processRes.success) throw new Error(processRes.error);
 
-                        // 3. Save with suffix
+                        // 4. Save with suffix
                         store.updateBatchItem(item.id, { currentStep: `Saving (${mode})...` });
 
                         let filename = extraction.videoTitle || extraction.videoId || 'transcript';
@@ -210,7 +225,7 @@ function App() {
                                     Modes
                                 </label>
                                 <div className="grid grid-cols-2 gap-1">
-                                    {['Markdown', 'Clean', 'Structured', 'Summary'].map((mode) => (
+                                    {['Summary', 'Markdown'].map((mode) => (
                                         <div
                                             key={mode}
                                             onClick={() => store.toggleProcessingMode(mode)}
@@ -243,6 +258,27 @@ function App() {
                                 </span>
                                 <span className="opacity-0 group-hover:opacity-100 text-tech-orange text-[10px] uppercase shrink-0">Browse</span>
                             </div>
+                        </div>
+
+                        {/* Save Raw Transcript Option */}
+                        <div
+                            onClick={() => store.setSaveRawTranscript(!store.saveRawTranscript)}
+                            className="flex items-center gap-2 cursor-pointer select-none no-drag group"
+                        >
+                            <div className={cn(
+                                "w-4 h-4 border-2 flex items-center justify-center transition-all",
+                                store.saveRawTranscript
+                                    ? "border-tech-orange bg-tech-orange/10"
+                                    : "border-tech-border group-hover:border-tech-text-muted"
+                            )}>
+                                {store.saveRawTranscript && <Check className="w-3 h-3 text-tech-orange" />}
+                            </div>
+                            <span className={cn(
+                                "text-[10px] uppercase tracking-wider font-bold transition-colors",
+                                store.saveRawTranscript ? "text-tech-orange" : "text-tech-text-muted group-hover:text-tech-text"
+                            )}>
+                                Save Raw Transcript
+                            </span>
                         </div>
                     </div>
 

@@ -121,7 +121,7 @@ async function getTranscript(url: string) {
 }
 
 // 2. LLM Service
-async function processLLM(transcript: string, mode: string, customPrompt?: string) {
+async function processLLM(transcript: string, mode: string, customPrompt?: string, youtubeUrl?: string) {
     sendLog('LLM Processing', 'start', `Mode: ${mode}`);
 
     // Safety check just in case
@@ -138,59 +138,26 @@ async function processLLM(transcript: string, mode: string, customPrompt?: strin
             apiKey: 'lm-studio'
         });
 
-        // Simplified, Direct Instruction Prompts
-        const prompts: Record<string, string> = {
-            clean: `Task: Clean the following transcript.
-Instructions:
-- Remove filler words (um, uh, like, you know).
-- Fix punctuation and capitalization.
-- Merge broken sentences.
-- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
-- Do NOT output anything else. Just the cleaned text.
+        // Load prompt from external file for easier editing
+        const loadPrompt = (mode: string): string => {
+            let promptPath = path.join(__dirname, `../electron/prompts/${mode}.txt`);
+            if (app.isPackaged) {
+                promptPath = path.join(process.resourcesPath, `prompts/${mode}.txt`);
+            }
 
-Transcript:
-${transcript}`,
-
-            structured: `Task: Structure this transcript with Markdown.
-Instructions:
-- Add ## Headers for main topics.
-- Use - Bullet points for lists.
-- Fix grammar.
-- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
-
-Transcript:
-${transcript}`,
-
-            summary: `Task: Summarize this transcript.
-Instructions:
-- Write a 2-3 sentence overview in the SAME LANGUAGE as the transcript.
-- List 3-5 Key Takeaways in the SAME LANGUAGE as the transcript.
-- Extract 1 meaningful quote.
-- IMPORTANT: Output MUST be in the same language as the input transcript.
-
-Transcript:
-${transcript}`,
-
-            markdown: `Task: Convert this to a detailed Markdown document.
-Instructions:
-- Use H1 for Title, H2 for Sections.
-- Preserve ALL details, numbers, and technical terms.
-- Fix flow and grammar.
-- IMPORTANT: Maintain the original language of the transcript. Do NOT translate.
-
-Transcript:
-${transcript}`,
-
-            json: `Task: Convert to JSON.
-Format: { "title": "...", "content": "..." }
-Instructions:
-- Maintain the original language for the content values.
-
-Transcript:
-${transcript}`
+            try {
+                const template = fs.readFileSync(promptPath, 'utf-8');
+                return template
+                    .replace('{{TRANSCRIPT}}', transcript)
+                    .replace(/\{\{YOUTUBE_URL\}\}/g, youtubeUrl || '');
+            } catch (e) {
+                console.error(`Failed to load prompt file for mode: ${mode}`, e);
+                // Fallback to basic prompt
+                return `Process this transcript in ${mode} format:\n\n${transcript}`;
+            }
         };
 
-        const prompt = customPrompt || prompts[mode] || prompts['clean'];
+        const prompt = customPrompt || loadPrompt(mode);
 
         // LM Studio auto-routes "local-model" to whatever is loaded
         const modelId = "local-model";
@@ -318,7 +285,7 @@ app.whenReady().then(() => {
     // IPC Handlers
     ipcMain.handle('extract-transcript', async (_, url) => getTranscript(url));
 
-    ipcMain.handle('process-llm', async (_, transcript, mode, prompt) => processLLM(transcript, mode, prompt));
+    ipcMain.handle('process-llm', async (_, transcript, mode, prompt, youtubeUrl) => processLLM(transcript, mode, prompt, youtubeUrl));
 
     ipcMain.handle('check-llm-connection', async () => checkLMStudioConnection());
 
