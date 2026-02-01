@@ -1,0 +1,8 @@
+# Force Rust detection
+*.rs linguist-language=Rust
+
+# Mark lock files as generated (excluded from stats)
+package-lock.json linguist-generated
+Cargo.lock linguist-generated
+pnpm-lock.yaml linguist-generated
+yarn.lock linguist-generated
