@@ -9,14 +9,7 @@ A **lightweight** desktop application for extracting and processing YouTube tran
 
 **Rebuilt in Rust using Tauri for a smaller, faster, and more efficient application.**
 
-## ✨ Improvements over Electron Version
 
-| Metric | Electron | Rust/Tauri |
-|--------|----------|------------|
-| Install Size | ~180MB | ~15MB |
-| Memory Usage | ~200MB | ~30MB |
-| Startup Time | ~3s | <1s |
-| Dependencies | Python + Node.js | None (standalone) |
 
 ## Features
 
