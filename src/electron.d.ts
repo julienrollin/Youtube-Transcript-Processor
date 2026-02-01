@@ -28,7 +28,7 @@ export interface LLMProcessResult {
 }
 
 export interface ElectronAPI {
-    extractTranscript: (url: string) => Promise<TranscriptExtractionResult>;
+    extractTranscript: (url: string, includeTimecodes?: boolean) => Promise<TranscriptExtractionResult>;
     processWithLLM: (transcript: string, mode: string, prompt?: string, youtubeUrl?: string) => Promise<LLMProcessResult>;
     selectOutputFolder: () => Promise<string | null>;
     saveTranscript: (content: string, filename: string, folder: string) => Promise<boolean>;

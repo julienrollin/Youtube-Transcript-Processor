@@ -73,7 +73,7 @@ function App() {
                 try {
                     // 1. Extract
                     store.updateBatchItem(item.id, { currentStep: 'Downloading transcript...' });
-                    const extraction = await window.electron.extractTranscript(item.url);
+                    const extraction = await window.electron.extractTranscript(item.url, store.includeTimecodes);
                     if (!extraction.success) throw new Error(extraction.error);
 
                     // Update title immediately
@@ -278,6 +278,27 @@ function App() {
                                 store.saveRawTranscript ? "text-tech-orange" : "text-tech-text-muted group-hover:text-tech-text"
                             )}>
                                 Save Raw Transcript
+                            </span>
+                        </div>
+
+                        {/* Include Timecodes Option */}
+                        <div
+                            onClick={() => store.setIncludeTimecodes(!store.includeTimecodes)}
+                            className="flex items-center gap-2 cursor-pointer select-none no-drag group"
+                        >
+                            <div className={cn(
+                                "w-4 h-4 border-2 flex items-center justify-center transition-all",
+                                store.includeTimecodes
+                                    ? "border-tech-orange bg-tech-orange/10"
+                                    : "border-tech-border group-hover:border-tech-text-muted"
+                            )}>
+                                {store.includeTimecodes && <Check className="w-3 h-3 text-tech-orange" />}
+                            </div>
+                            <span className={cn(
+                                "text-[10px] uppercase tracking-wider font-bold transition-colors",
+                                store.includeTimecodes ? "text-tech-orange" : "text-tech-text-muted group-hover:text-tech-text"
+                            )}>
+                                Include Timecodes
                             </span>
                         </div>
                     </div>

@@ -1,4 +1,12 @@
-Format as markdown with headers, bullets, bold, italic. Keep original language. No content changes.
+CRITICAL: Output MUST be in the EXACT SAME LANGUAGE as the transcript below. DO NOT translate. If the transcript is in English, output in English. If French, output in French. etc.
+
+Format this transcript as clean, readable markdown:
+- Use ## headers to break into logical sections based on topic changes
+- Use bullet points for lists of items or steps
+- Use **bold** for key terms and concepts
+- Use *italic* for emphasis
+- Keep ALL original content - do not summarize or remove information
+- Preserve the natural flow and meaning of the speech
 
 Transcript:
 {{TRANSCRIPT}}

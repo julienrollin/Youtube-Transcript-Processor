@@ -2,7 +2,7 @@ Summarize this video transcript. Create sections that best fit the content.
 
 RULES:
 - Output in SAME LANGUAGE as transcript
-- Timestamps [MM:SS] at END of each bullet
+- TIMESTAMPS: ONLY include timestamps [MM:SS] if the transcript contains them (format like [00:30]). If no timestamps exist in the transcript, do NOT add any - leave them out entirely. NEVER invent or hallucinate timestamps.
 - Create 4-6 sections with emoji + descriptive titles that fit THIS content
 - 4-8 bullets per section
 - Mark best insight with 🌟 AHA:

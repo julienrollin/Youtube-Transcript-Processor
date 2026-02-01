@@ -30,6 +30,8 @@ interface AppState {
     toggleProcessingMode: (mode: string) => void;
     saveRawTranscript: boolean;
     setSaveRawTranscript: (val: boolean) => void;
+    includeTimecodes: boolean;
+    setIncludeTimecodes: (val: boolean) => void;
 
     // Processing State
     isProcessing: boolean;
@@ -74,6 +76,9 @@ export const useAppStore = create<AppState>((set) => ({
 
     saveRawTranscript: false,
     setSaveRawTranscript: (saveRawTranscript) => set({ saveRawTranscript }),
+
+    includeTimecodes: false,
+    setIncludeTimecodes: (includeTimecodes) => set({ includeTimecodes }),
 
     isProcessing: false,
     setProcessing: (isProcessing) => set({ isProcessing }),

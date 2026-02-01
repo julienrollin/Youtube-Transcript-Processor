@@ -52,9 +52,11 @@ def get_transcript(video_id, language='auto'):
                     data = YouTubeTranscriptApi.fetch(video_id)
         
         if data:
+            # Check if timecodes arg is passed
+            with_timecodes = len(sys.argv) > 3 and sys.argv[3].lower() == 'true'
             return json.dumps({
                 "success": True, 
-                "transcript": format_transcript(data), 
+                "transcript": format_transcript(data, with_timecodes), 
                 "segments": len(data),
                 "language": transcript_obj.language_code if transcript_obj else "unknown",
                 "is_generated": transcript_obj.is_generated if transcript_obj else True
@@ -66,16 +68,38 @@ def get_transcript(video_id, language='auto'):
         return json.dumps({"success": False, "error": str(e)})
 
 
-def format_transcript(data):
-    """Convert transcript data to plain text."""
+def format_seconds_to_timestamp(seconds):
+    """Convert seconds to MM:SS format."""
+    minutes = int(seconds // 60)
+    secs = int(seconds % 60)
+    return f"[{minutes:02d}:{secs:02d}]"
+
+
+def format_transcript(data, with_timecodes=False):
+    """Convert transcript data to plain text, optionally with timecodes."""
     if not data:
         return ""
-    # Check first item type and process accordingly
-    if hasattr(data[0], 'text'):
-        return " ".join(item.text for item in data).replace('\n', ' ')
-    elif isinstance(data[0], dict) and 'text' in data[0]:
-        return " ".join(item['text'] for item in data).replace('\n', ' ')
-    return " ".join(str(item) for item in data).replace('\n', ' ')
+    
+    parts = []
+    for item in data:
+        # Get text and start time
+        if hasattr(item, 'text'):
+            text = item.text
+            start = getattr(item, 'start', 0)
+        elif isinstance(item, dict):
+            text = item.get('text', '')
+            start = item.get('start', 0)
+        else:
+            text = str(item)
+            start = 0
+        
+        if with_timecodes:
+            timestamp = format_seconds_to_timestamp(start)
+            parts.append(f"{timestamp} {text}")
+        else:
+            parts.append(text)
+    
+    return " ".join(parts).replace('\n', ' ')
 
 
 if __name__ == "__main__":

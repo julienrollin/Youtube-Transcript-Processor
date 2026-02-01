@@ -21,7 +21,7 @@ function sendLog(step: string, status: 'start' | 'done' | 'error' | 'info', mess
 // --- Services ---
 
 // 1. YouTube Service using Python (Most Robust)
-async function getTranscript(url: string) {
+async function getTranscript(url: string, includeTimecodes: boolean = false) {
     sendLog('YouTube Transcript', 'start', 'Initializing Python bridge...');
 
     // Extract video ID (simple regex)
@@ -47,7 +47,7 @@ async function getTranscript(url: string) {
         sendLog('Transcript Fetch', 'start', 'Spawning Python process...');
         console.log("Script Path:", scriptPath);
 
-        const pythonProcess = spawn('python', [scriptPath, videoId]);
+        const pythonProcess = spawn('python', [scriptPath, videoId, 'auto', includeTimecodes.toString()]);
 
         let dataString = '';
         let errorString = '';
@@ -283,7 +283,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
     // IPC Handlers
-    ipcMain.handle('extract-transcript', async (_, url) => getTranscript(url));
+    ipcMain.handle('extract-transcript', async (_, url, includeTimecodes) => getTranscript(url, includeTimecodes || false));
 
     ipcMain.handle('process-llm', async (_, transcript, mode, prompt, youtubeUrl) => processLLM(transcript, mode, prompt, youtubeUrl));
 
