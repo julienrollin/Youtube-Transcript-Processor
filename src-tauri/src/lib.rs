@@ -1,3 +1,4 @@
+mod python;
 mod youtube;
 mod llm;
 
@@ -185,6 +186,12 @@ pub fn run() {
             
             app.manage(AppState {
                 resource_path: Mutex::new(resource_path),
+            });
+            
+            // Auto install dependencies in a separate thread to not block startup
+            let app_handle = app.handle().clone();
+            std::thread::spawn(move || {
+                python::check_and_install_dependencies(&app_handle);
             });
             
             Ok(())
