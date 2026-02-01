@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Transcript Processor</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+
+<body>
+    <div id="app" class="min-h-screen">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container">
+                <!-- INPUTS SECTION -->
+                <div class="section">
+                    <!-- URLs Input -->
+                    <div class="form-group">
+                        <label>
+                            <i data-lucide="settings" class="icon-sm"></i>
+                            YOUTUBE_URLS
+                        </label>
+                        <textarea id="urlsInput" placeholder="https://youtu.be/..." spellcheck="false"></textarea>
+                    </div>
+
+                    <!-- Settings Grid -->
+                    <div class="settings-grid">
+                        <!-- Language -->
+                        <div class="form-group">
+                            <label>
+                                <i data-lucide="settings" class="icon-sm"></i>
+                                LANGUAGE
+                            </label>
+                            <select id="language">
+                                <option>Auto</option>
+                                <option>English</option>
+                                <option>French</option>
+                                <option>Spanish</option>
+                                <option>German</option>
+                            </select>
+                        </div>
+
+                        <!-- Modes -->
+                        <div class="form-group">
+                            <label>
+                                <i data-lucide="settings" class="icon-sm"></i>
+                                MODES
+                            </label>
+                            <div class="mode-grid">
+                                <div class="mode-btn active" data-mode="Summary">SUMMARY</div>
+                                <div class="mode-btn" data-mode="Markdown">MARKDOWN</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Folder -->
+                    <div class="form-group">
+                        <label>
+                            <i data-lucide="folder" class="icon-sm"></i>
+                            OUTPUT_FOLDER
+                        </label>
+                        <div id="folderPicker" class="folder-picker">
+                            <span id="folderPath">Select Output Destination...</span>
+                            <span class="browse-hint">Browse</span>
+                        </div>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="checkbox-group" id="saveRawCheck">
+                        <div class="checkbox"></div>
+                        <span>SAVE RAW TRANSCRIPT</span>
+                    </div>
+
+                    <div class="checkbox-group" id="timecodesCheck">
+                        <div class="checkbox"></div>
+                        <span>INCLUDE TIMECODES</span>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="actions">
+                    <button id="processBtn" class="process-btn" disabled>
+                        <i data-lucide="file-text" class="icon-sm"></i>
+                        <span>LM STUDIO OFFLINE</span>
+                    </button>
+                </div>
+
+                <!-- QUEUE SECTION -->
+                <div class="queue-section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <i data-lucide="zap" class="icon-sm"></i>
+                            QUEUE
+                        </div>
+                        <span id="queueCount" class="queue-count">0/0</span>
+                    </div>
+                    <div id="queueList" class="queue-list">
+                        <div class="queue-empty">
+                            <i data-lucide="zap" class="icon-lg"></i>
+                            <span>QUEUE EMPTY</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOG SECTION -->
+                <div class="log-section">
+                    <div class="section-title">
+                        <i data-lucide="terminal" class="icon-sm"></i>
+                        LIVE_LOG
+                    </div>
+                    <div id="logList" class="log-list">
+                        <div class="log-empty">Waiting for activity...</div>
+                    </div>
+                </div>
+
+                <!-- LLM STATUS -->
+                <div class="llm-status">
+                    <div class="status-left">
+                        <div id="statusDot" class="status-dot offline"></div>
+                        <span class="status-label">LLM</span>
+                        <span id="statusText" class="status-value offline">OFFLINE</span>
+                    </div>
+                    <div id="modelInfo" class="model-info" style="display: none;">
+                        <i data-lucide="cpu" class="icon-sm"></i>
+                        <span id="modelName"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
