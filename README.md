@@ -7,10 +7,6 @@ A **lightweight** desktop application for extracting and processing YouTube tran
 
 ![UI Preview](ui/ui_preview.png)
 
-**Rebuilt in Rust using Tauri for a smaller, faster, and more efficient application.**
-
-
-
 ## Features
 
 - **Extract Transcripts**: Formatting-free extraction of transcripts from YouTube videos.
@@ -41,9 +37,8 @@ Once the server is running the YT Transcript Processor will automatically detect
 ## 📦 Installation & Usage
 
 1.  Download the latest installer from the [Releases](https://github.com/julienrollin/Youtube-Transcript-Processor/releases) page.
-2.  Run the installer (`YT Transcript Processor.msi`).
-3.  Launch the application.
-4.  Paste a YouTube URL and click **TRANSCRIPT!**.
+2.  Run the installer (`YT Transcript Processor.exe`).
+3.  Paste a YouTube URL, select your output folder and click **TRANSCRIPT!**.
 
 ## Development
 
