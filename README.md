@@ -15,8 +15,6 @@ A **lightweight** desktop application for extracting and processing YouTube tran
 - **Multiple Modes**:
     - **Summary**: Generate a concise overview with key takeaways.
     - **Markdown**: Convert to a detailed Markdown document, perfect for LLM ingestion.
-- **Privacy Focused**: All processing happens locally on your machine.
-- **No Python Required**: Native Rust transcript extraction!
 
 ## ⚙️ Prerequisites
 
