@@ -1,4 +1,4 @@
-# YT Transcript Processor
+# Youtube Transcript Processor
 
 ![Rust](https://img.shields.io/badge/rust-1.75+-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
