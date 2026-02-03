@@ -63,44 +63,89 @@ pub async fn check_connection() -> ConnectionStatus {
         .build()
     {
         Ok(c) => c,
-        Err(_) => return ConnectionStatus { connected: false, model: None },
+        Err(_) => {
+            return ConnectionStatus {
+                connected: false,
+                model: None,
+            }
+        }
     };
 
     let url = format!("{}/models", LMSTUDIO_ENDPOINT);
-    
+
     match client.get(&url).send().await {
         Ok(response) => {
             if response.status().is_success() {
                 match response.json::<ModelsResponse>().await {
                     Ok(data) => {
                         let model = data.data.first().map(|m| m.id.clone());
-                        ConnectionStatus { connected: true, model }
+                        ConnectionStatus {
+                            connected: true,
+                            model,
+                        }
                     }
-                    Err(_) => ConnectionStatus { connected: true, model: None },
+                    Err(_) => ConnectionStatus {
+                        connected: true,
+                        model: None,
+                    },
                 }
             } else {
-                ConnectionStatus { connected: false, model: None }
+                ConnectionStatus {
+                    connected: false,
+                    model: None,
+                }
             }
         }
-        Err(_) => ConnectionStatus { connected: false, model: None },
+        Err(_) => ConnectionStatus {
+            connected: false,
+            model: None,
+        },
     }
 }
 
 /// Load prompt template from file
 fn load_prompt(mode: &str, resource_path: &PathBuf) -> Option<String> {
-    let prompt_path = resource_path.join("prompts").join(format!("{}.txt", mode));
-    
-    // Try resource path first
-    if let Ok(content) = std::fs::read_to_string(&prompt_path) {
-        return Some(content);
+    let filename = format!("{}.txt", mode);
+
+    // Build list of paths to try
+    let mut paths_to_try: Vec<PathBuf> = vec![
+        // 1. Resource path from Tauri (resource_dir/prompts/)
+        resource_path.join("prompts").join(&filename),
+        // 2. Development: relative to cwd
+        PathBuf::from("../prompts").join(&filename),
+        PathBuf::from("prompts").join(&filename),
+    ];
+
+    // 3. Paths relative to the executable (for bundled builds)
+    if let Ok(exe_path) = std::env::current_exe() {
+        if let Some(exe_dir) = exe_path.parent() {
+            // Tauri bundles resources to _up_/ directory
+            paths_to_try.push(exe_dir.join("_up_").join("prompts").join(&filename));
+            // Or directly next to exe
+            paths_to_try.push(exe_dir.join("prompts").join(&filename));
+            // Or in resources folder
+            paths_to_try.push(exe_dir.join("resources").join("prompts").join(&filename));
+            // Or parent directory
+            paths_to_try.push(exe_dir.join("..").join("prompts").join(&filename));
+        }
     }
-    
-    // Try relative path (for development)
-    let dev_path = PathBuf::from("../prompts").join(format!("{}.txt", mode));
-    if let Ok(content) = std::fs::read_to_string(&dev_path) {
-        return Some(content);
+
+    // Try each path
+    for path in &paths_to_try {
+        if let Ok(content) = std::fs::read_to_string(path) {
+            return Some(content);
+        }
     }
-    
+
+    // Log debug info if not found
+    eprintln!(
+        "[LLM] Warning: Prompt '{}' not found in any location:",
+        mode
+    );
+    for path in &paths_to_try {
+        eprintln!("  - {} (exists: {})", path.display(), path.exists());
+    }
+
     None
 }
 
@@ -138,24 +183,30 @@ pub async fn process_transcript(
     // Truncate transcript if too long to fit in context window
     // Assuming ~4 chars per token, 16k context, leaving 2k for prompt and response
     const MAX_TRANSCRIPT_CHARS: usize = 50000; // ~12.5k tokens
-    
+
     let truncated_transcript = if transcript.len() > MAX_TRANSCRIPT_CHARS {
         // Try to truncate at a sentence boundary
         let truncated = &transcript[..MAX_TRANSCRIPT_CHARS];
         if let Some(last_period) = truncated.rfind(". ") {
-            format!("{}. [TRANSCRIPT TRUNCATED DUE TO LENGTH]", &truncated[..last_period])
+            format!(
+                "{}. [TRANSCRIPT TRUNCATED DUE TO LENGTH]",
+                &truncated[..last_period]
+            )
         } else {
             format!("{} [TRANSCRIPT TRUNCATED]", truncated)
         }
     } else {
         transcript.to_string()
     };
-    
+
     let prompt = match load_prompt(mode, resource_path) {
         Some(template) => template
             .replace("{{TRANSCRIPT}}", &truncated_transcript)
             .replace("{{YOUTUBE_URL}}", youtube_url),
-        None => format!("Process this transcript in {} format:\n\n{}", mode, truncated_transcript),
+        None => format!(
+            "Process this transcript in {} format:\n\n{}",
+            mode, truncated_transcript
+        ),
     };
 
     let request = ChatRequest {

@@ -4,6 +4,19 @@ use serde::{Deserialize, Serialize};
 use std::error::Error;
 use std::process::Command;
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+/// Create a command that doesn't show a window on Windows
+fn hidden_command(cmd: &str) -> Command {
+    let mut command = Command::new(cmd);
+    #[cfg(target_os = "windows")]
+    command.creation_flags(CREATE_NO_WINDOW);
+    command
+}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TranscriptSegment {
     pub text: String,
@@ -117,11 +130,35 @@ fn fetch_transcript_python(
                 String::new()
             }
         },
-        // Tauri resource path
+        // Tauri resource path: ..\\scripts (relative to exe)
         {
             if let Ok(exe_path) = std::env::current_exe() {
                 if let Some(exe_dir) = exe_path.parent() {
                     exe_dir.join("..").join("scripts").join("fetch_transcript.py").to_string_lossy().to_string()
+                } else {
+                    String::new()
+                }
+            } else {
+                String::new()
+            }
+        },
+        // Tauri bundled resources on Windows: _up_\\scripts (Tauri uses _up_ for parent)
+        {
+            if let Ok(exe_path) = std::env::current_exe() {
+                if let Some(exe_dir) = exe_path.parent() {
+                    exe_dir.join("_up_").join("scripts").join("fetch_transcript.py").to_string_lossy().to_string()
+                } else {
+                    String::new()
+                }
+            } else {
+                String::new()
+            }
+        },
+        // Tauri v2 resources directory (usually next to exe in 'resources' folder)
+        {
+            if let Ok(exe_path) = std::env::current_exe() {
+                if let Some(exe_dir) = exe_path.parent() {
+                    exe_dir.join("resources").join("scripts").join("fetch_transcript.py").to_string_lossy().to_string()
                 } else {
                     String::new()
                 }
@@ -140,7 +177,7 @@ fn fetch_transcript_python(
     let mut last_error = String::from("No Python interpreter found");
     
     for python_cmd in python_commands {
-        let result = Command::new(python_cmd)
+        let result = hidden_command(python_cmd)
             .arg(script_path)
             .arg(video_id)
             .arg(language)
