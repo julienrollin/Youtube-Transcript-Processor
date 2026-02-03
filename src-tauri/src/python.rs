@@ -1,5 +1,20 @@
 use std::process::Command;
 use tauri::AppHandle;
+use tauri::Manager;
+
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
+/// Create a command that doesn't show a window on Windows
+fn hidden_command(cmd: &str) -> Command {
+    let mut command = Command::new(cmd);
+    #[cfg(target_os = "windows")]
+    command.creation_flags(CREATE_NO_WINDOW);
+    command
+}
 
 /// Check if Python is installed and accessible
 pub fn check_python_installation() -> bool {
@@ -7,7 +22,7 @@ pub fn check_python_installation() -> bool {
     let commands = ["python", "python3", "py"];
     
     for cmd in commands {
-        if Command::new(cmd).arg("--version").output().is_ok() {
+        if hidden_command(cmd).arg("--version").output().is_ok() {
             return true;
         }
     }
@@ -29,19 +44,31 @@ pub fn check_and_install_dependencies(app: &AppHandle) {
 
     // Find working python command
     for cmd in commands {
-        if Command::new(cmd).arg("--version").output().is_ok() {
+        if hidden_command(cmd).arg("--version").output().is_ok() {
             python_cmd = cmd;
             break;
         }
     }
 
+    // Check if we have a marker file indicating dependencies are already installed
+    let app_data_dir = app.path().app_data_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    let marker_file = app_data_dir.join(".deps_installed");
+    
+    if marker_file.exists() {
+        super::send_log(app, "Startup", "success", Some("Python dependencies ready."));
+        return;
+    }
+
     // Check if module is installed
-    let check_status = Command::new(python_cmd)
+    let check_status = hidden_command(python_cmd)
         .args(["-c", "import youtube_transcript_api"])
         .output();
 
     if let Ok(output) = check_status {
         if output.status.success() {
+            // Create marker file to cache this result
+            let _ = std::fs::create_dir_all(&app_data_dir);
+            let _ = std::fs::write(&marker_file, "installed");
             super::send_log(app, "Startup", "success", Some("Python dependencies ready."));
             return;
         }
@@ -50,14 +77,17 @@ pub fn check_and_install_dependencies(app: &AppHandle) {
     // Install if missing
     super::send_log(app, "Startup", "info", Some("Installing youtube-transcript-api..."));
     
-    let install_status = Command::new(python_cmd)
+    let install_status = hidden_command(python_cmd)
         .args(["-m", "pip", "install", "youtube-transcript-api"])
         .output();
 
     match install_status {
         Ok(output) => {
             if output.status.success() {
-                super::send_log(app, "Startup", "success", Some("Parameters installed successfully."));
+                // Create marker file to cache successful install
+                let _ = std::fs::create_dir_all(&app_data_dir);
+                let _ = std::fs::write(&marker_file, "installed");
+                super::send_log(app, "Startup", "success", Some("Dependencies installed successfully."));
             } else {
                 let stderr = String::from_utf8_lossy(&output.stderr);
                 super::send_log(app, "Startup", "error", Some(&format!("Failed to install dependencies: {}", stderr)));
