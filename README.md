@@ -3,7 +3,7 @@
 ![Rust](https://img.shields.io/badge/rust-1.75+-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-Dsktop application for extracting and processing YouTube transcripts using a local LLM (via LM Studio).
+Desktop application for extracting and processing YouTube transcripts using a local LLM (via LM Studio).
 
 ![UI Preview](ui/ui_preview.png)
 
